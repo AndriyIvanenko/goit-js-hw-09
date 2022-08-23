@@ -9,7 +9,7 @@ const labels = document.querySelectorAll('.label');
 const datePicker = document.querySelector('#datetime-picker');
 const startBtn = document.querySelector('[data-start]');
 
-// --------------------- interface stylization ------------------------------------
+// ----------------------------------- interface stylization ------------------------------------
 
 timer.style.display = 'flex';
 fields.forEach(field => {
@@ -26,8 +26,9 @@ labels.forEach(label => {
   label.textContent = label.textContent.toUpperCase();
 });
 
+// --------------------------------- datePicker initialization -----------------------------
+
 startBtn.disabled = true;
-// let currentDate = new Date();
 Notiflix.Notify.init({
   position: 'center-top',
 });
@@ -48,29 +49,33 @@ const options = {
 };
 const selectedDate = flatpickr(datePicker, options);
 
+// ------------------------------------ countDown initialization -------------------------------------
+
 startBtn.addEventListener('click', onStartClick);
 function onStartClick() {
   startBtn.disabled = true;
-  // currentDate = new Date();
   let timeLeft = selectedDate.selectedDates[0] - new Date();
 
-  values[0].textContent = addLeadingZero(convertMs(timeLeft).days);
-  values[1].textContent = addLeadingZero(convertMs(timeLeft).hours);
-  values[2].textContent = addLeadingZero(convertMs(timeLeft).minutes);
-  values[3].textContent = addLeadingZero(convertMs(timeLeft).seconds);
+  // values[0].textContent = addLeadingZero(convertMs(timeLeft).days);
+  // values[1].textContent = addLeadingZero(convertMs(timeLeft).hours);
+  // values[2].textContent = addLeadingZero(convertMs(timeLeft).minutes);
+  // values[3].textContent = addLeadingZero(convertMs(timeLeft).seconds);
 
   const timerID = setInterval(() => {
-    if (timeLeft < 1000) {
+    if (timeLeft <= 0) {
       clearInterval(timerID);
       startBtn.disabled = false;
+    } else {
+      values[0].textContent = addLeadingZero(convertMs(timeLeft).days);
+      values[1].textContent = addLeadingZero(convertMs(timeLeft).hours);
+      values[2].textContent = addLeadingZero(convertMs(timeLeft).minutes);
+      values[3].textContent = addLeadingZero(convertMs(timeLeft).seconds);
+      timeLeft = selectedDate.selectedDates[0] - new Date();
     }
-    values[0].textContent = addLeadingZero(convertMs(timeLeft).days);
-    values[1].textContent = addLeadingZero(convertMs(timeLeft).hours);
-    values[2].textContent = addLeadingZero(convertMs(timeLeft).minutes);
-    values[3].textContent = addLeadingZero(convertMs(timeLeft).seconds);
-    timeLeft = selectedDate.selectedDates[0] - new Date();
   }, 1000);
 }
+
+// ------------------------------------ convert functions -------------------------------------
 
 function convertMs(ms) {
   const second = 1000;
